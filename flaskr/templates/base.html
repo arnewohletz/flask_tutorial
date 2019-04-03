@@ -1,0 +1,34 @@
+<!doctype html>
+<!--This is where the block title definition of the template will be-->
+<title>{% block title %}{% endblock %} - Flaskr</title>
+<!--
+attach a stylesheet /static/style.css to this html file
+'/static' is set as default static folder for Flask and does not requires to be
+added to the Application later on, but during instantation
+-->
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<nav>
+  <h1>Flaskr</h1>
+  <ul>
+    {% if g.user %}
+      <li><span>{{ g.user['username'] }}</span>
+        <!--Add link 'Log out' which referse to /auth/logout-->
+      <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+    {% else %}
+    <!--Same as above-->
+      <li><a href="{{ url_for('auth.register') }}">Register</a>
+      <li><a href="{{ url_for('auth.login') }}">Log In</a>
+    {% endif %}
+  </ul>
+</nav>
+<section class="content">
+  <header>
+    <!--This is where the block header definition of the template will be-->
+    {% block header %}{% endblock %}
+  </header>
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+  <!--This is where the block content definition of the template will be-->
+  {% block content %}{% endblock %}
+</section>

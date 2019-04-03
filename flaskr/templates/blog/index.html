@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Posts{% endblock %}</h1>
+  <!--
+  Check, if the user is logged in, hence g.user isn't None
+  If so, a 'create' link is added to the header, letting the user add blogs.
+  Jinja:
+  {#
+  {% a_statement %}
+  {{ expression }}
+  {# comment #}
+  # line statement ##
+  #}
+  The application context object 'g' is available in Jinja templates.
+  template variables are defined by the context dictionary passed to the template.
+  Accessing attribute variables:
+  {#
+  {{foo.bar}} or {{foo('bar')}} -> do the same things
+  Watch the round brackets here, Python uses squared brackets to acces dict values
+  #}
+  -->
+  {% if g.user %}
+    <a class="action" href="{{ url_for('blog.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <!--posts is available here since it was passed from blog.py
+  here: looping through all posts-->
+  {% for post in posts %}
+    <article class="post">
+      <header>
+        <div>
+          <!--add the blog('title') value as header-->
+          <h1>{{ post['title'] }}</h1>
+          <!--add post['username'] and post['created'] in a certain time format-->
+          <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
+        </div>
+        <!--if the post author id matches the logged in id-->
+        {% if g.user['id'] == post['author_id'] %}
+          <!--show a link that directs to the 'update' method of the 'blog' blueprint
+          Since this method requires an id, pass post's id as value for id-->
+          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+        {% endif %}
+      </header>
+      <!--set post('body') as content-->
+      <p class="body">{{ post['body'] }}</p>
+    </article>
+    <!--Input a horizontal rule (hr) element if this post is not the last one-->
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
