@@ -50,6 +50,7 @@ def create():
     return render_template('blog/create.html')
 
 # return a post content as dict if the logged in user matches that blog's author
+# the post's 'id' value must be given -> see delete(id), update(id)
 def get_post(id, check_author=True):
     post = get_db().execute(
         'SELECT p.id, title, body, created, author_id, username'
@@ -73,8 +74,12 @@ def get_post(id, check_author=True):
 # when triggered via POST request, the blog data is overwritten and user
 # redirected to 127.0.0.1:5000/index
 # Example URL: 127.0.0.1:5000/23/update
-# id must be of type integer
+
+# id must be of type integer and is retrived from the POST request's data
+# from the *.html template (-> href="{{ url_for('blog.update', id=post['id']) }}")
+
 # If triggered via GET request, the blog/update.html page is rendered
+# unless the post is owned by another user (-> permission denied error)
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
