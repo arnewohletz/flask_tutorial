@@ -2,8 +2,7 @@ import pytest
 from flask import g, session
 from flaskr.db import get_db
 
-
-# during tests 'with app.app_context()'' is always required when an action within
+# during tests, 'with app.app_context()'' is always required when an action within
 # the application is called without using a request.
 # from the test perspective, the appliation is outside of its scope and cannot
 # be accessed, but only requests can be made and response values checked.
@@ -11,7 +10,8 @@ from flaskr.db import get_db
 # cannot be done with a request here, but the application's context must be accessed
 # first and then the database can be queried
 
-# test the register functions
+# the passed in 'client' is a werkzeug.test.Client instance, which allows to
+# send requests to the application for testing purposes
 def test_register(client, app):
     # test if GET request to /auth/register page returns proper status code
     assert client.get('/auth/register').status_code == 200
@@ -51,6 +51,7 @@ def test_register_validate_input(client, username, password, message):
         data={'username': username, 'password': password}
     )
     # check if the message string is within the response's data
+    # response.data is a string containing all ... CHECK DURING DEBUGGING
     assert message in response.data
 
 
@@ -59,6 +60,7 @@ def test_register_validate_input(client, username, password, message):
 # is available here), which is a AuthActions object that extends
 # a client object with a special login() and logout() method that use a test
 # user
+# 'auth' is a fixture function (can never have arguments)
 def test_login(client, auth):
     assert client.get('/auth/login').status_code == 200
     response = auth.login() # login with test user ()

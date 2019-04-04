@@ -70,6 +70,9 @@ class AuthActions(object):
         return self._client.get('/auth/logout')
 
 # passes user authentification class to test
+# when 'auth' fixture is passed into a test function, then the auth variable
+# will be an AuthActions
+# the client argument is the werkzeug.test.Client
 @pytest.fixture
 def auth(client):
     return AuthActions(client)
